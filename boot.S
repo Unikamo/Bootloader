@@ -18,6 +18,12 @@ print_char:
 	inc si ; Increment to load next char
 	jmp print_char ; Continue until \0
 
+load_disk:
+	; TODO : Load disk (int 0x13)
+	; TODO 2 : Read input from user,
+	; TODO 3 : Print that input,
+	; TODO 4 : Store that input to the drive.
+
 hang:
 	jmp hang
 
