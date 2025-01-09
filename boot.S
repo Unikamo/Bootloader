@@ -5,7 +5,7 @@ section .text
 global _start
 
 _start:
-	mov si, message
+	mov si, message ; Change 'message' to another string 
 	call print_char
 	call hang
 
