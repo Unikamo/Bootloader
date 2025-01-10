@@ -1,23 +1,27 @@
 bits 16
 org 0x7c00
 
+section .text
+global _start
+
 %include "print.S" ; to print
 
-mov ax, 0
-mov ds, ax
+_start:
+	mov ax, 0
+	mov ds, ax
 
-mov ah, 0x00
-mov al, 0x03 ; 80x25 txt
-int 0x10 ; Video Mode
+	mov ah, 0x00
+	mov al, 0x03 ; 80x25 txt
+	int 0x10 ; Video Mode
 
 
-mov si, message ; Change 'message' to another string 
-call print
+	mov si, message ; Change 'message' to another string 
+	call print
 
 ;call load_disk
 ;call read_disk
 
-jmp hang
+	jmp hang
 
 read_disk:
 	mov ah, 0x2 ; Read sector
