@@ -11,13 +11,14 @@ if [ "$answer" -eq 1 ]; then
     echo "File linked, launching QEMU..."
     qemu-system-i386 \
   -drive format=raw,file=boot.bin,if=floppy \
-  -drive format=raw,file=disk.img,if=ide,index=0
+  -drive format=raw,file=disk.img,if=ide,index=1 \
+  -boot order=a
     echo "QEMU launched."
 elif [ "$answer" -eq 2 ]; then
     qemu-system-i386 \
   -drive format=raw,file=boot.bin,if=floppy \
-  -drive format=raw,file=disk.img,if=ide,index=0
-
+  -drive format=raw,file=disk.img,if=ide,index=1 \
+  -boot order=a 
     echo "QEMU launched."
 elif [ "$answer" -eq 3 ]; then
     qemu-img create -f raw disk.img 10M
