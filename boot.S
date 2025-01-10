@@ -5,40 +5,61 @@ section .text
 global _start
 
 _start:
+	xor ax, ax
+	mov ds, ax
+	
 	mov si, message ; Change 'message' to another string 
 	call print_char
+	call load_disk
+	call read_disk
 	jmp hang
 
 print_char:
 	mov al, [si] ; Load the string
 	cmp al, 0
-	je hang
+	je done
 	mov ah, 0x0E ; Teletype output
 	int 0x10 ; Print from al
 	inc si ; Increment to load next char
 	jmp print_char ; Continue until \0
 
-load_disk:
-	mov ah, 15
-	mov dl, 0x80 ; 1st HDD
-	int 0x13
-	
-	jc disk_error ; If CF is set, go to disk_error
+done:
+	ret
 
+read_disk:
+	mov ah, 0x2 ; Read sector
+	mov al, 5 ; Read 5 sectors
+	mov ch, 0 ; From cylinder 0
+	mov cl, 2 ; Sector number 2
+	mov dh, 0 ; Head #0
+	xor bx, bx
+	mov es, bx
+	mov bx, 0x7e00
+	int 0x13
+	jmp 0x7e00
+
+	ret
+	
+
+load_disk:
 	mov ah, 0x13 ; Write sector
-	mov al, 1 ; To the first sector
+	mov al, 1 ; Write 1 sector 
 	mov ch, 0 ; First Cylinder high byte
-	mov cl, 1 ; First sector and High Byte 0
+	mov cl, 2 ; Second sector and High Byte 0
 	mov dh, 0 ; First head
 	mov dl, 0x80 ; First HD
+	
+	lea bx, [disk_content] ; What message to write
 	mov ax, 0x1000
 	mov es, ax ; Idfk what that means, but it will work
-	lea bx, [message] ; What message to write
-	int 0x13	
+	int 0x13
 
 	jc disk_error
+
+	mov si, load_msg
+	call print_char
 	
-	jmp hang
+	ret
 	
 	; TODO 2 : Read input from user,
 	; TODO 3 : Print that input,
@@ -54,19 +75,38 @@ disk_error:
 	mov ah, 0x0E
 	int 0x10
 
-	jmp hang
+	ret
 
 hang:
 	jmp hang
+
+reset_registers:
+	xor ah, ah
+	xor al, al
+	xor ch, ch
+	xor dl, dl
+	xor cl, cl
+	xor dh, dh
+	xor dl, dl
+	mov ax, 0
+	mov es, ax
+	xor ax, ax	
+	xor bx, bx
+	xor si, si
+
+
 
 error:
 	db "An error occured: ", 0
 
 load_msg:
-	db "Wrote to disk!", 0
+	db "Wrote to disk", 0xD, 0xA, 0
+
+disk_content:
+	db "This was written to the disk!", 0
 
 message:
-	db "Basic Bootloader loaded!", 0
+	db "Basic Bootloader loaded!", 0xD, 0xA, 0
 
 times 510-($-$$) db 0 ; Fill
 dw 0xAA55
