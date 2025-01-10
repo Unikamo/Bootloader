@@ -1,4 +1,4 @@
-jmp null
+jmp print_null
 
 print:
 	mov ah, 0x0e
@@ -14,4 +14,4 @@ print:
 error: db "An error occured: ", 0
 load_msg: db "Wrote to disk", 0xD, 0xA, 0
 message: db "Basic bootloader loaded!", 0xD, 0xA, 0
-null: 
+print_null: 

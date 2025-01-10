@@ -1,27 +1,33 @@
 bits 16
 org 0x7c00
 
-section .text
-global _start
-
 %include "print.S" ; to print
+%include "graphics.S" ; for graphic colors
+; Current : 80x25 text mode
 
-_start:
-	mov ax, 0
-	mov ds, ax
+mov ax, 0
+mov ds, ax
 
-	mov ah, 0x00
-	mov al, 0x03 ; 80x25 txt
-	int 0x10 ; Video Mode
+; FIXME idfk what's the issue, just won't print
+jmp change_videomode
 
+jmp green_foreground
+mov si, message ; Change 'message' to another string 
+call print
 
-	mov si, message ; Change 'message' to another string 
-	call print
+jmp red_foreground
+mov si, message
+call print
+
+jmp grey_foreground
+mov si, message
+call print
+
 
 ;call load_disk
 ;call read_disk
 
-	jmp hang
+jmp hang
 
 read_disk:
 	mov ah, 0x2 ; Read sector
