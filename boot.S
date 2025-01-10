@@ -1,30 +1,23 @@
-BITS 16
-ORG 0x7c00
+bits 16
+org 0x7c00
 
-section .text
-global _start
+%include "print.S" ; to print
 
-_start:
-	xor ax, ax
-	mov ds, ax
-	
-	mov si, message ; Change 'message' to another string 
-	call print_char
-	call load_disk
-	call read_disk
-	jmp hang
+mov ax, 0
+mov ds, ax
 
-print_char:
-	mov al, [si] ; Load the string
-	cmp al, 0
-	je done
-	mov ah, 0x0E ; Teletype output
-	int 0x10 ; Print from al
-	inc si ; Increment to load next char
-	jmp print_char ; Continue until \0
+mov ah, 0x00
+mov al, 0x03 ; 80x25 txt
+int 0x10 ; Video Mode
 
-done:
-	ret
+
+mov si, message ; Change 'message' to another string 
+call print
+
+;call load_disk
+;call read_disk
+
+jmp hang
 
 read_disk:
 	mov ah, 0x2 ; Read sector
@@ -57,7 +50,7 @@ load_disk:
 	jc disk_error
 
 	mov si, load_msg
-	call print_char
+	call print
 	
 	ret
 	
@@ -68,7 +61,7 @@ load_disk:
 
 disk_error:
 	mov si, error
-	call print_char
+	call print
 
 	mov al, ah
 	add al, '0'
@@ -96,17 +89,7 @@ reset_registers:
 
 
 
-error:
-	db "An error occured: ", 0
-
-load_msg:
-	db "Wrote to disk", 0xD, 0xA, 0
-
-disk_content:
-	db "This was written to the disk!", 0
-
-message:
-	db "Basic Bootloader loaded!", 0xD, 0xA, 0
+disk_content: db "This was written to the disk!", 0
 
 times 510-($-$$) db 0 ; Fill
 dw 0xAA55
