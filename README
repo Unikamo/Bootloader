@@ -1,0 +1,7 @@
+		Baskel - The Basic Kernel
+-----------------------------------------
+Work In Progress Bootloader and Kernel written in NASM and C respectively.
+Project started on 2025-01-09.
+Commands to run and build are provided with the software, which is licensed under the GNU General Public License v3.
+To start using (which I wouldn't recommend), ``git clone`` the repository, then launch ``./utils.sh``.
+
